@@ -58,6 +58,7 @@ const ctx = canvas.getContext("2d");
 ctx.scale(30, 30);
 
 let shapeObj = null;
+let grid = generateGrid();
 
 function generateRandomShape() {
     let random = Math.floor(Math.random() * 7);
@@ -95,6 +96,27 @@ function renderShape() {
 
 function moveDown() {
     shapeObj.y += 1;
+    renderGrid();
+}
+
+function generateGrid() {
+    let grid = [];
+    for(let i = 0; i < Rows; i++) {
+        grid.push([]);
+        for (let j = 0; j < Cols; j++) {
+            grid[i].push(0);
+        }
+    }
+    return grid;
+}
+
+function renderGrid() {
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[i].length; j++) {
+            ctx.fillStyle = Colors[grid[i][j]];
+            ctx.fillRect(j, i, 1, 1);
+        }
+    }
     renderShape();
 }
 
