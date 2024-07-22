@@ -95,8 +95,10 @@ function renderShape() {
 }
 
 function moveDown() {
-    shapeObj.y += 1;
-    renderGrid();
+    if (!collision(shapeObj.x, shapeObj.y + 1)) {
+        shapeObj.y += 1;
+        renderGrid();
+    }
 }
 
 function generateGrid() {
@@ -119,4 +121,52 @@ function renderGrid() {
     }
     renderShape();
 }
+
+function moveLeft() {
+    if (!collision(shapeObj.x - 1, shapeObj.y)) {
+        shapeObj.x -= 1;
+        renderGrid();
+    }
+}
+
+function moveRight() {
+    if (!collision(shapeObj.x + 1, shapeObj.y)) {
+        shapeObj.x += 1;
+        renderGrid();
+    }
+}
+
+function collision(x, y) {
+    let shape = shapeObj.shape;
+
+    for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[i].length; j++) {
+            if (shape[i][j] == 1) {
+                let p = x + j;
+                let q = y + i;
+
+                if (p >= 0 && p < Cols && q >= 0 && q < Rows) {
+                    
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+document.addEventListener("keydown", function(e) {
+    let key = e.code;
+
+    if (key == "ArrowDown") {
+        moveDown();
+    } else if (key == "ArrowLeft") {
+        moveLeft();
+    } else if (key == "ArrowRight") {
+        moveRight();
+    } else if (key == "ArrowUp") {
+        rotate();
+    }
+});
 
