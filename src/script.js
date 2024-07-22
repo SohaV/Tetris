@@ -57,6 +57,17 @@ const ctx = canvas.getContext("2d");
 // Similarly, scaleHeight is 30 and total rows are 20, hence total height of the canvas is 600.
 ctx.scale(30, 30);
 
+function generateGrid() {
+    let grid = [];
+    for(let i = 0; i < Rows; i++) {
+        grid.push([]);
+        for (let j = 0; j < Cols; j++) {
+            grid[i].push(0);
+        }
+    }
+    return grid;
+}
+
 let shapeObj = null;
 let grid = generateGrid();
 
@@ -69,16 +80,6 @@ function generateRandomShape() {
     let y = 0; // top-center y-coordinate is 0.
 
     return {shape, x, y, colorIndex};
-}
-
-setInterval(newGameState, 500);
-
-function newGameState() {
-    if (shapeObj == null) {
-        shapeObj = generateRandomShape();
-        renderShape();
-    }
-    moveDown();
 }
 
 function renderShape() {
@@ -94,23 +95,15 @@ function renderShape() {
     }
 }
 
-function moveDown() {
-    if (!collision(shapeObj.x, shapeObj.y + 1)) {
-        shapeObj.y += 1;
-        renderGrid();
+function newGameState() {
+    if (shapeObj == null) {
+        shapeObj = generateRandomShape();
+        renderShape();
     }
+    moveDown();
 }
 
-function generateGrid() {
-    let grid = [];
-    for(let i = 0; i < Rows; i++) {
-        grid.push([]);
-        for (let j = 0; j < Cols; j++) {
-            grid[i].push(0);
-        }
-    }
-    return grid;
-}
+setInterval(newGameState, 500);
 
 function renderGrid() {
     for (let i = 0; i < grid.length; i++) {
@@ -120,20 +113,6 @@ function renderGrid() {
         }
     }
     renderShape();
-}
-
-function moveLeft() {
-    if (!collision(shapeObj.x - 1, shapeObj.y)) {
-        shapeObj.x -= 1;
-        renderGrid();
-    }
-}
-
-function moveRight() {
-    if (!collision(shapeObj.x + 1, shapeObj.y)) {
-        shapeObj.x += 1;
-        renderGrid();
-    }
 }
 
 function collision(x, y) {
@@ -146,7 +125,9 @@ function collision(x, y) {
                 let q = y + i;
 
                 if (p >= 0 && p < Cols && q >= 0 && q < Rows) {
-                    
+                    if (grid[q][p] > 0) {
+                        return true;
+                    }
                 } else {
                     return true;
                 }
@@ -154,6 +135,44 @@ function collision(x, y) {
         }
     }
     return false;
+}
+
+function moveDown() {
+    if (!collision(shapeObj.x, shapeObj.y + 1)) {
+        shapeObj.y += 1;
+    } else {
+        for (let i = 0; i < shapeObj.shape.length; i++) {
+            for (let j = 0; j < shapeObj.shape[i].length; j++) {
+                if (shapeObj.shape[i][j] == 1) {
+                    // getting the coordinates of the shape with respect to the grid
+                    let p = shapeObj.x + j;
+                    let q = shapeObj.y + i;
+
+                    grid[q][p] = shapeObj.colorIndex;
+                }
+            }
+        }
+        if (shapeObj.y == 0) {
+            alert("Game Over!");
+            grid = generateGrid();
+        }
+        shapeObj = null;
+    }
+    renderGrid();
+}
+
+function moveLeft() {
+    if (!collision(shapeObj.x - 1, shapeObj.y)) {
+        shapeObj.x -= 1;
+        renderGrid();
+    } 
+}
+
+function moveRight() {
+    if (!collision(shapeObj.x + 1, shapeObj.y)) {
+        shapeObj.x += 1;
+        renderGrid();
+    }
 }
 
 document.addEventListener("keydown", function(e) {
