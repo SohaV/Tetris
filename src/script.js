@@ -115,8 +115,8 @@ function renderGrid() {
     renderShape();
 }
 
-function collision(x, y) {
-    let shape = shapeObj.shape;
+function collision(x, y, rotatedShape) {
+    let shape = rotatedShape || shapeObj.shape;
 
     for (let i = 0; i < shape.length; i++) {
         for (let j = 0; j < shape[i].length; j++) {
@@ -173,6 +173,34 @@ function moveRight() {
         shapeObj.x += 1;
         renderGrid();
     }
+}
+
+function rotate() {
+    let rotatedShape = [];
+    let shape = shapeObj.shape;
+
+    for (let i = 0; i < shape.length; i++) {
+        rotatedShape.push([]);
+        for (let j = 0; j < shape[i].length; j++) {
+            rotatedShape[i].push(0);
+        }
+    }
+
+    for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[i].length; j++) {
+            rotatedShape[i][j] = shape[j][i];
+        }
+    }
+
+    for (let i = 0; i < rotatedShape.length; i++) {
+        rotatedShape[i] = rotatedShape[i].reverse();
+    }
+
+    if (!collision(shapeObj.x, shapeObj.y, rotatedShape)) {
+        shapeObj.shape = rotatedShape;
+    }
+    
+    renderGrid();
 }
 
 document.addEventListener("keydown", function(e) {
